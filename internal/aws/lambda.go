@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
+	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 )
 
 type LambdaFunction struct {
@@ -36,6 +37,14 @@ func (f *LambdaFetcher) FetchAll(ctx context.Context) ([]LambdaFunction, error) 
 	return functions, nil
 }
 
-func mapLambda(fn interface{ GetFunctionName() *string }) LambdaFunction {
-	return LambdaFunction{}
+func mapLambda(fn types.FunctionConfiguration) LambdaFunction {
+	name := ""
+	if fn.FunctionName != nil {
+		name = *fn.FunctionName
+	}
+	return LambdaFunction{
+		Name:    name,
+		Runtime: string(fn.Runtime),
+		State:   string(fn.State),
+	}
 }
