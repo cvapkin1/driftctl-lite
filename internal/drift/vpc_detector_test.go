@@ -67,3 +67,15 @@ func TestDetectVPCDrift_NoDrift(t *testing.T) {
 		t.Errorf("expected no drift, got %d results", len(results))
 	}
 }
+
+func TestDetectVPCDrift_EmptyState(t *testing.T) {
+	state := []map[string]interface{}{}
+	live := []aws.VPCResource{
+		{ID: "vpc-555", CIDR: "10.0.0.0/8", State: "available"},
+	}
+
+	results := DetectVPCDrift(state, live)
+	if len(results) != 0 {
+		t.Errorf("expected no drift when state is empty, got %d results", len(results))
+	}
+}
