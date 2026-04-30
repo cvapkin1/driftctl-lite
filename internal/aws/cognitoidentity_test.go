@@ -2,6 +2,7 @@ package aws_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -47,4 +48,15 @@ func TestCognitoIdentityFetchAll_Empty(t *testing.T) {
 	resources, err := fetchCognitoIdentityPoolsWithClient(mock)
 	assert.NoError(t, err)
 	assert.Empty(t, resources)
+}
+
+func TestCognitoIdentityFetchAll_Error(t *testing.T) {
+	expectedErr := errors.New("API error: access denied")
+	mock := &mockCognitoIdentityClient{
+		err: expectedErr,
+	}
+
+	resources, err := fetchCognitoIdentityPoolsWithClient(mock)
+	assert.ErrorIs(t, err, expectedErr)
+	assert.Nil(t, resources)
 }
